@@ -2,6 +2,7 @@ import { Trophy, Undo2 } from "lucide-react";
 import type { GameConfig, Player, Visit } from "@/lib/darts/game";
 import { statsForPlayer } from "@/lib/darts/stats";
 import { useT } from "@/lib/i18n";
+import { SaveStatsLink } from "@/components/ui/AccountPrompts";
 
 interface Props {
   config: GameConfig;
@@ -62,6 +63,7 @@ export function MatchSummary({ config, players, visits, winnerId, onUndo, action
         <button type="button" className="btn btn-ghost btn-sm w-full" onClick={onUndo}>
           <Undo2 className="size-4" /> {t.undoLastVisit}
         </button>
+        <SaveStatsLink />
       </div>
     </div>
   );

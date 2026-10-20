@@ -1,7 +1,7 @@
 // Checkout service worker: offline shell for solo / pass-and-play games.
 // Hashed build assets are cache-first; pages are network-first with a cached fallback.
-const VERSION = "checkout-v2";
-const SHELL = ["/", "/play", "/play/game", "/online", "/stats", "/settings", "/manifest.webmanifest"];
+const VERSION = "checkout-v3";
+const SHELL = ["/", "/play", "/play/game", "/online", "/stats", "/settings", "/account", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -28,7 +28,10 @@ self.addEventListener("fetch", (event) => {
   // Never cache Supabase or other cross-origin traffic.
   if (url.origin !== self.location.origin) return;
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/")) {
+  // Auth links carry one-time codes: always straight to the network.
+  if (url.pathname.startsWith("/auth/")) return;
+
+  if (/^\/(_next\/static|icons|brand|splash)\//.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then(
         (hit) =>

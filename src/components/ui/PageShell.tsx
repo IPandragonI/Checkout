@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useT } from "@/lib/i18n";
 
@@ -25,6 +26,9 @@ export function PageShell({
           </Link>
         )}
         <h1 className="flex-1 text-xl font-bold">{title}</h1>
+        <Link href="/" aria-label="Checkout" className="shrink-0">
+          <Image src="/brand/logo-256.png" alt="" width={32} height={32} className="size-8 rounded-[7px]" />
+        </Link>
         {actions}
       </header>
       <main className="flex flex-1 flex-col gap-4 px-4 py-2">{children}</main>

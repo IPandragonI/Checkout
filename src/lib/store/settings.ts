@@ -20,6 +20,8 @@ interface SettingsState {
   /** Announce scores out loud like a referee. */
   caller: boolean;
   haptics: boolean;
+  /** The guest "create an account" card on the home screen was dismissed. */
+  authPromptDismissed: boolean;
   lastConfig: GameConfig;
   lastPlayers: string[];
   set: (patch: Partial<Omit<SettingsState, "set">>) => void;
@@ -36,6 +38,7 @@ export const useSettings = create<SettingsState>()(
       autoSubmit: true,
       caller: false,
       haptics: true,
+      authPromptDismissed: false,
       lastConfig: { startScore: 301, doubleOut: true, legsToWin: 1 },
       lastPlayers: [],
       set: (patch) => set(patch),

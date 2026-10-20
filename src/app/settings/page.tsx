@@ -1,6 +1,9 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { PageShell, Segmented } from "@/components/ui/PageShell";
+import { onlineEnabled } from "@/lib/online/supabase";
 import { useHydrated } from "@/lib/hooks";
 import { useT } from "@/lib/i18n";
 import { InputMode, Lang, Theme, useSettings } from "@/lib/store/settings";
@@ -88,6 +91,16 @@ function SettingsForm() {
       <Toggle label={t.autoSubmit} hint={t.autoSubmitHint} checked={s.autoSubmit} onChange={(autoSubmit) => s.set({ autoSubmit })} />
       <Toggle label={t.caller} hint={t.callerHint} checked={s.caller} onChange={(caller) => s.set({ caller })} />
       <Toggle label={t.haptics} hint={t.hapticsHint} checked={s.haptics} onChange={(haptics) => s.set({ haptics })} />
+
+      {onlineEnabled && (
+        <Link href="/account" className="flex items-center justify-between rounded-field bg-base-100 px-4 py-3">
+          <span>
+            <span className="font-medium">{t.account}</span>
+            <span className="block text-xs text-base-content/60">{t.saveStatsLink}</span>
+          </span>
+          <ChevronRight className="size-5 text-base-content/40" />
+        </Link>
+      )}
 
       <div className="rounded-box bg-base-100 p-4 text-sm text-base-content/70 space-y-1">
         <p className="font-medium text-base-content">{t.installTitle}</p>

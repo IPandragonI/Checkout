@@ -8,7 +8,8 @@ import { replay } from "@/lib/darts/game";
 import { computeStats, PlayerStats } from "@/lib/darts/stats";
 import { useHydrated } from "@/lib/hooks";
 import { useT } from "@/lib/i18n";
-import { MatchRecord, useHistory } from "@/lib/store/history";
+import { useAuth } from "@/lib/auth/store";
+import { MatchRecord, useHistory, visibleMatches } from "@/lib/store/history";
 import { useSettings } from "@/lib/store/settings";
 
 const norm = (s: string) => s.trim().toLowerCase();
@@ -21,8 +22,10 @@ export default function StatsPage() {
 
 function Dashboard() {
   const t = useT();
-  const matches = useHistory((s) => s.matches);
+  const allMatches = useHistory((s) => s.matches);
   const clear = useHistory((s) => s.clear);
+  const userId = useAuth((s) => s.user?.id ?? null);
+  const matches = useMemo(() => visibleMatches(allMatches, userId), [allMatches, userId]);
   const myName = useSettings((s) => s.name);
 
   // Every name that appears in history, most frequent first.
@@ -85,7 +88,7 @@ function Dashboard() {
       <button
         type="button"
         className="btn btn-ghost btn-sm text-error"
-        onClick={() => confirm(t.clearHistoryConfirm) && clear()}
+        onClick={() => confirm(userId ? t.clearHistoryConfirmCloud : t.clearHistoryConfirm) && clear()}
       >
         <Trash2 className="size-4" /> {t.clearHistory}
       </button>

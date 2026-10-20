@@ -94,5 +94,47 @@ create policy "visits readable" on public.visits for select using (true);
 create policy "visits creatable" on public.visits for insert with check (true);
 create policy "visits removable" on public.visits for delete using (true);
 
+-- ---------------------------------------------------------------------------
+-- Accounts: personal match history synced from the app (Supabase Auth users).
+-- Guests never touch this table; each row belongs to exactly one user.
+-- ---------------------------------------------------------------------------
+
+create table if not exists public.matches (
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  -- Client-side id: a uuid for local games, "<room id>:<match no>" for online rooms.
+  id text not null check (char_length(id) <= 80),
+  played_at timestamptz not null,
+  mode text not null check (mode in ('local', 'online')),
+  room_code text,
+  config jsonb not null,
+  players jsonb not null,
+  visits jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, id)
+);
+
+create index if not exists matches_user_played_idx on public.matches (user_id, played_at desc);
+
+alter table public.matches enable row level security;
+
+drop policy if exists "own matches readable" on public.matches;
+drop policy if exists "own matches insertable" on public.matches;
+drop policy if exists "own matches updatable" on public.matches;
+drop policy if exists "own matches deletable" on public.matches;
+create policy "own matches readable" on public.matches for select to authenticated using (user_id = auth.uid());
+create policy "own matches insertable" on public.matches for insert to authenticated with check (user_id = auth.uid());
+create policy "own matches updatable" on public.matches for update to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+create policy "own matches deletable" on public.matches for delete to authenticated using (user_id = auth.uid());
+
+create or replace function public.touch_updated_at()
+returns trigger
+language plpgsql
+as 'begin new.updated_at = now(); return new; end;';
+
+drop trigger if exists matches_touch on public.matches;
+create trigger matches_touch before update on public.matches
+  for each row execute function public.touch_updated_at();
+
 -- Optional housekeeping with pg_cron (enable the extension first): drop rooms older than 2 days.
 -- select cron.schedule('purge-rooms', '0 4 * * *', 'delete from public.rooms where created_at < now() - interval ''2 days''');

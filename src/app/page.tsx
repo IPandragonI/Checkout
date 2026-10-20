@@ -3,6 +3,7 @@
 import { ChartColumn, Play, Settings, Users, Wifi } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { AccountButton, GuestPrompt } from "@/components/ui/AccountPrompts";
 import { PreferenceToggles } from "@/components/ui/Preferences";
 import { replay } from "@/lib/darts/game";
 import { useHydrated } from "@/lib/hooks";
@@ -19,16 +20,19 @@ export default function Home() {
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 pt-safe pb-safe">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <AccountButton />
         <PreferenceToggles />
       </div>
       <div className="mt-2 flex flex-col items-center gap-3 text-center">
-        <Image src="/icons/icon-192.png" alt="" width={88} height={88} className="rounded-3xl shadow-lg" priority />
+        <Image src="/brand/logo-256.png" alt="" width={112} height={112} className="size-28 drop-shadow-xl" priority />
         <h1 className="text-4xl font-black tracking-tight">Checkout</h1>
         <p className="text-base-content/60">
           {hydrated && name ? t.greeting(name) : t.tagline}
         </p>
       </div>
+
+      <GuestPrompt />
 
       {ongoing && (
         <Link href="/play/game" className="card bg-accent text-accent-content">
