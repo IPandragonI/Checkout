@@ -290,7 +290,7 @@ const fr: Dict = {
   onlineRoomHint: "Chaque joueur sur son téléphone",
   stats: "Stats",
   settings: "Réglages",
-  vs: "contre",
+  vs: "vs",
   menu: "Menu",
 
   game: "Partie",
@@ -405,7 +405,7 @@ const fr: Dict = {
   coNote: (a, b) => `Le % de checkout compte les volées commencées sur un score finissable (${a}/${b}).`,
   scoreDistribution: "Répartition des scores",
   solo: "Solo",
-  vsList: (names) => `contre ${names}`,
+  vsList: (names) => `vs ${names}`,
   roomLower: (code) => `salle ${code}`,
   avgShort: "moy.",
   win: "V",

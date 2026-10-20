@@ -79,7 +79,7 @@ function Carousel({ lines, legsToWin }: { lines: PlayerLine[]; legsToWin: number
       <div
         ref={track}
         onScroll={onScroll}
-        className="no-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-[14%]"
+        className="no-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-[14%] py-1"
       >
         {lines.map((l, i) => (
           <div

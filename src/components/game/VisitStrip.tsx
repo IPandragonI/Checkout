@@ -29,7 +29,7 @@ export function dartTone(d: Dart): { badge: string; text: string } {
 export function VisitStrip({ darts, thrown, status, route, remaining, dartsLeft, notice, alt }: Props) {
   const t = useT();
   return (
-    <div className="px-3 space-y-1.5">
+    <div className="px-3 space-y-1.5 py-1">
       <div className="flex items-center gap-1.5">
         {[0, 1, 2].map((i) => {
           const d = darts[i];
