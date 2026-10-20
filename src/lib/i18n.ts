@@ -16,6 +16,7 @@ const en = {
   stats: "Stats",
   settings: "Settings",
   vs: "vs",
+  menu: "Menu",
 
   // Setup
   game: "Game",
@@ -246,6 +247,34 @@ const en = {
   authTitle: "Join the game!",
   authSubtitle: "Save your stats and find them on every device. Optional — guests can keep playing.",
   orUseEmail: "or with your email",
+
+  // Single-out double alternative
+  doubleAlt: "or double:",
+
+  // Orientation guard
+  rotateTitle: "Turn your phone upright",
+  rotateBody: "Checkout is designed for portrait mode.",
+
+  // Credits
+  credits: "Credits",
+  creditsHint: "Version, creator and technologies",
+  version: "Version",
+  build: "Build",
+  builtOn: "Built",
+  createdBy: "Created by",
+  sourceCode: "Source code",
+  builtWith: "Built with",
+  madeFor: "Made with ♥ for darts players.",
+  tech: {
+    next: "App framework",
+    react: "User interface",
+    supabase: "Accounts, sync & live rooms",
+    tailwind: "Styling",
+    daisyui: "UI components",
+    zustand: "Local state & offline storage",
+    lucide: "Icons",
+    vercel: "Hosting",
+  },
 };
 
 export type Dict = typeof en;
@@ -262,6 +291,7 @@ const fr: Dict = {
   stats: "Stats",
   settings: "Réglages",
   vs: "contre",
+  menu: "Menu",
 
   game: "Partie",
   startScore: "Score de départ",
@@ -277,8 +307,8 @@ const fr: Dict = {
   gameOn: "C'est parti !",
 
   soloPractice: "Entraînement solo",
-  dOut: "Sortie D",
-  sOut: "Sortie S",
+  dOut: "Sortie Double",
+  sOut: "Sortie Simple",
   legN: (n) => `Manche ${n}`,
   firstTo: (n) => `Premier à ${n}`,
   inputModeLabel: "Mode de saisie",
@@ -480,6 +510,31 @@ const fr: Dict = {
   authTitle: "Rejoins la partie !",
   authSubtitle: "Sauvegarde tes stats et retrouve-les sur tous tes appareils. Facultatif : les invités peuvent continuer à jouer.",
   orUseEmail: "ou avec ton e-mail",
+
+  doubleAlt: "ou double :",
+
+  rotateTitle: "Remets ton téléphone à la verticale",
+  rotateBody: "Checkout est conçu pour le mode portrait.",
+
+  credits: "Crédits",
+  creditsHint: "Version, créateur et technologies",
+  version: "Version",
+  build: "Build",
+  builtOn: "Compilé le",
+  createdBy: "Créé par",
+  sourceCode: "Code source",
+  builtWith: "Réalisé avec",
+  madeFor: "Fait avec ♥ pour les joueurs de fléchettes.",
+  tech: {
+    next: "Framework de l'application",
+    react: "Interface utilisateur",
+    supabase: "Comptes, synchro & salles en direct",
+    tailwind: "Styles",
+    daisyui: "Composants d'interface",
+    zustand: "État local & stockage hors ligne",
+    lucide: "Icônes",
+    vercel: "Hébergement",
+  },
 };
 
 export const DEFAULT_LANG: Lang = "fr";

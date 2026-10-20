@@ -20,7 +20,10 @@ export function AuthProvider() {
 
     const { data } = supabase().auth.onAuthStateChange((event, session) => {
       const u = session?.user;
-      const name = (u?.user_metadata?.display_name as string | undefined) ?? null;
+      const meta = (u?.user_metadata ?? {}) as Record<string, unknown>;
+      // Our own display_name first, then what Google (or GitHub) provides.
+      const providerName = [meta.full_name, meta.name].find((v): v is string => typeof v === "string" && v.trim() !== "");
+      const name = (typeof meta.display_name === "string" && meta.display_name.trim()) || providerName || null;
       auth.set({
         status: u ? "user" : "guest",
         user: u ? { id: u.id, email: u.email ?? null, name } : null,
@@ -31,7 +34,13 @@ export function AuthProvider() {
         const settings = useSettings.getState();
         if (!settings.name.trim() && name) settings.set({ name });
         // Supabase advises against awaiting its own calls inside this callback.
-        setTimeout(() => void requestSync(), 0);
+        setTimeout(() => {
+          // First OAuth sign-in: keep the provider's name as our display name (once).
+          if (!meta.display_name && providerName) {
+            void supabase().auth.updateUser({ data: { display_name: providerName } });
+          }
+          void requestSync();
+        }, 0);
       }
     });
 

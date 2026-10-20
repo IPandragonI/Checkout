@@ -87,7 +87,7 @@ function Dashboard() {
   return (
     <>
       {names.length > 1 && (
-        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4" role="tablist" aria-label={t.player}>
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 py-1" role="tablist" aria-label={t.player}>
           {names.map((n) => (
             <button
               key={n.key}

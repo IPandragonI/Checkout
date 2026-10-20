@@ -1,7 +1,7 @@
 // Checkout service worker: offline shell for solo / pass-and-play games.
 // Hashed build assets are cache-first; pages are network-first with a cached fallback.
-const VERSION = "checkout-v5";
-const SHELL = ["/", "/play", "/play/game", "/online", "/stats", "/settings", "/account", "/manifest.webmanifest"];
+const VERSION = "checkout-v6";
+const SHELL = ["/", "/play", "/play/game", "/online", "/stats", "/settings", "/account", "/credits", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

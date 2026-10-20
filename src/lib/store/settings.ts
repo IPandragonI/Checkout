@@ -39,7 +39,7 @@ export const useSettings = create<SettingsState>()(
       caller: false,
       haptics: true,
       authPromptDismissed: false,
-      lastConfig: { startScore: 301, doubleOut: true, legsToWin: 1 },
+      lastConfig: { startScore: 301, doubleOut: false, legsToWin: 1 },
       lastPlayers: [],
       set: (patch) => set(patch),
     }),

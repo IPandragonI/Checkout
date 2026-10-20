@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Lilita_One } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
+import { OrientationGuard } from "@/components/OrientationGuard";
 import { PreferencesSync } from "@/components/ui/Preferences";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import splashScreens from "@/lib/splash-screens.json";
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <PreferencesSync />
         <AuthProvider />
+        <OrientationGuard />
         <ServiceWorker />
       </body>
     </html>

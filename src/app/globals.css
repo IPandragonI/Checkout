@@ -180,6 +180,13 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
+/* Portrait only: phones held sideways (short touch screens) see the rotate prompt. */
+@media (orientation: landscape) and (max-height: 540px) and (pointer: coarse) {
+  .orientation-guard {
+    display: flex;
+  }
+}
+
 /* Swipeable tracks (player carousel, chips) without a visible scrollbar. */
 .no-scrollbar {
   scrollbar-width: none;

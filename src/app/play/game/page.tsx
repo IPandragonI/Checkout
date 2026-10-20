@@ -42,8 +42,8 @@ export default function LocalGamePage() {
             <Link href="/play" className="btn btn-soft" onClick={quit}>
               {t.newGame}
             </Link>
-            <Link href="/stats" className="btn btn-soft">
-              {t.stats}
+            <Link href="/" className="btn btn-soft">
+              {t.menu}
             </Link>
           </div>
         </>

@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
       {/* Top half: full-bleed logo artwork with the app name. */}
-      <header className="relative h-[50dvh] min-h-80 max-h-[32rem] w-full overflow-hidden">
+      <header className="relative h-[58dvh] min-h-88 max-h-[38rem] w-full overflow-hidden">
         <Image
           src="/brand/hero.webp"
           alt=""
@@ -52,20 +52,20 @@ export default function Home() {
       </header>
 
       {/* Bottom half: the action center. */}
-      <main className="relative z-10 -mt-6 flex flex-1 flex-col gap-4 rounded-t-[2rem] bg-base-200 px-4 pt-6 pb-safe">
+      <main className="relative z-10 -mt-6 flex flex-1 flex-col gap-3 rounded-t-[2rem] bg-base-200 px-4 pt-5 pb-safe">
         {ongoing && (
-          <ActionButton href="/play/game" className="btn-accent" icon={<Play className="size-8 fill-current" />} pulse>
+          <ActionButton href="/play/game" className="btn-accent" icon={<Play className="size-6 fill-current" />} pulse>
             {t.resume}
             <Hint>
               {ongoing.config.startScore} · {ongoing.players.map((p) => p.name).join(` ${t.vs} `)}
             </Hint>
           </ActionButton>
         )}
-        <ActionButton href="/play" className="btn-primary" icon={<Users className="size-8" />}>
+        <ActionButton href="/play" className="btn-primary" icon={<Users className="size-6" />}>
           {t.newGame}
           <Hint>{t.newGameHint}</Hint>
         </ActionButton>
-        <ActionButton href="/online" className="btn-secondary" icon={<Wifi className="size-8" />}>
+        <ActionButton href="/online" className="btn-secondary" icon={<Wifi className="size-6" />}>
           {t.onlineRoom}
           <Hint>{t.onlineRoomHint}</Hint>
         </ActionButton>
@@ -90,15 +90,15 @@ function ActionButton({
   children: React.ReactNode;
 }) {
   return (
-    <Link href={href} className={`btn h-22 justify-start gap-4 rounded-box px-4 text-left ${className}`}>
-      <span className={`grid size-14 shrink-0 place-items-center rounded-2xl bg-black/15 ${pulse ? "animate-pulse" : ""}`}>
+    <Link href={href} className={`btn h-17 justify-start gap-3 rounded-box px-3 text-left ${className}`}>
+      <span className={`grid size-11 shrink-0 place-items-center rounded-xl bg-black/15 ${pulse ? "animate-pulse" : ""}`}>
         {icon}
       </span>
-      <span className="min-w-0 font-display text-2xl leading-tight tracking-wide">{children}</span>
+      <span className="min-w-0 font-display text-xl leading-tight tracking-wide">{children}</span>
     </Link>
   );
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <span className="block truncate font-sans text-sm font-medium tracking-normal opacity-80">{children}</span>;
+  return <span className="block truncate font-sans text-xs font-medium tracking-normal opacity-80">{children}</span>;
 }

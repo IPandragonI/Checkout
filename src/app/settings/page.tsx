@@ -1,6 +1,7 @@
 "use client";
 
-import { Database, Gamepad2, Moon, SlidersHorizontal, Sun, Target, Trash2 } from "lucide-react";
+import { ChevronRight, Database, Gamepad2, Info, Moon, SlidersHorizontal, Sun, Target, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { AccountStatusCard } from "@/components/ui/AccountPrompts";
 import { ConfigFields } from "@/components/ui/ConfigFields";
 import { PageShell, Segmented } from "@/components/ui/PageShell";
@@ -156,6 +157,14 @@ function SettingsForm() {
           <p>{t.installHow}</p>
           <p>{t.installOffline}</p>
         </div>
+        <Link href="/credits" className="tile flex items-center gap-3 px-4 py-3">
+          <Info className="size-5 text-primary" />
+          <span className="flex-1">
+            <span className="font-medium">{t.credits}</span>
+            <span className="block text-xs text-base-content/60">{t.creditsHint}</span>
+          </span>
+          <ChevronRight className="size-5 text-base-content/40" />
+        </Link>
       </Section>
     </div>
   );

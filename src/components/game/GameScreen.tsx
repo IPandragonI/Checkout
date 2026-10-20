@@ -3,7 +3,7 @@
 import { ArrowLeft, Calculator, Target } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { suggestCheckout } from "@/lib/darts/checkout";
-import { Dart, Multiplier } from "@/lib/darts/dart";
+import { Dart, dartLabel, isDouble, Multiplier } from "@/lib/darts/dart";
 import {
   evaluateDarts,
   evaluateTotal,
@@ -83,6 +83,15 @@ export function GameScreen({
       : inputMode === "total"
         ? suggestCheckout(start, 3, config.doubleOut)
         : null;
+
+  // Single-out: also offer the double finish when it's a different route.
+  const hintRemaining = inputMode === "darts" ? live.remaining : start;
+  const hintDarts = inputMode === "darts" ? dartsLeft : 3;
+  const doubleRoute = !config.doubleOut && route ? suggestCheckout(hintRemaining, hintDarts, true) : null;
+  const alt =
+    doubleRoute && !isDouble(route![route!.length - 1]) && doubleRoute.map(dartLabel).join() !== route!.map(dartLabel).join()
+      ? doubleRoute
+      : null;
 
   const mine = (id: string) => !myPlayerIds || myPlayerIds.has(id);
   const canScore = currentId !== null && (mine(currentId) || unlockedFor === currentId);
@@ -293,10 +302,11 @@ export function GameScreen({
           remaining={live.remaining}
           dartsLeft={dartsLeft}
           notice={legNotice}
+          alt={alt}
         />
       ) : (
         <div className="px-3">
-          <CheckoutHint route={route} remaining={start} dartsLeft={3} status="open" notice={legNotice} />
+          <CheckoutHint route={route} alt={alt} remaining={start} dartsLeft={3} status="open" notice={legNotice} />
         </div>
       )}
 
