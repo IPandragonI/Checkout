@@ -26,7 +26,7 @@ export function DartPad({ multiplier, onMultiplier, onDart, onBackspace, disable
   const prefix = multiplier === 3 ? "T" : multiplier === 2 ? "D" : "";
 
   return (
-    <div className="flex flex-1 flex-col gap-1.5 min-h-0">
+    <div className="flex flex-1 flex-col gap-4 min-h-0">
       <div className="grid grid-cols-3 gap-1.5">
         {MULTIPLIERS.map(({ m, label, active }) => (
           <button
