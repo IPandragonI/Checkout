@@ -35,7 +35,7 @@ export function VisitStrip({ darts, thrown, status, route, remaining, dartsLeft,
         })}
         <div
           className={`w-16 h-10 rounded-field grid place-items-center font-mono text-xl font-bold tabular ${
-            status === "bust" ? "bg-error text-error-content" : status === "checkout" ? "bg-success text-success-content" : "bg-neutral"
+            status === "bust" ? "bg-error text-error-content" : status === "checkout" ? "bg-success text-success-content" : "bg-neutral text-neutral-content"
           }`}
         >
           {status === "bust" ? t.bust.toUpperCase() : thrown}

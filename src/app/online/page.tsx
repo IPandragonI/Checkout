@@ -85,9 +85,9 @@ function OnlineForms() {
         />
       </label>
 
-      <section className="card bg-base-100">
+      <section className="card panel">
         <div className="card-body gap-3 p-4">
-          <h2 className="card-title">{t.joinWithCode}</h2>
+          <h2 className="card-title font-display text-xl tracking-wide font-normal">{t.joinWithCode}</h2>
           <input
             className="input input-lg w-full text-center font-mono text-4xl tracking-[0.5em] uppercase"
             inputMode="text"
@@ -119,9 +119,9 @@ function OnlineForms() {
         </div>
       )}
 
-      <section className="card bg-base-100">
+      <section className="card panel">
         <div className="card-body gap-3 p-4">
-          <h2 className="card-title">{t.hostRoom}</h2>
+          <h2 className="card-title font-display text-xl tracking-wide font-normal">{t.hostRoom}</h2>
           <ConfigFields value={config} onChange={setConfig} />
           <button type="button" className="btn btn-accent" disabled={busy !== null} onClick={create}>
             {busy === "create" ? <span className="loading loading-spinner" /> : t.createRoom}

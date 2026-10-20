@@ -1,16 +1,18 @@
 "use client";
 
 import type { Provider } from "@supabase/supabase-js";
-import { Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
+import { KeyRound, Mail, UserRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
+import { AccountStatusCard } from "@/components/ui/AccountPrompts";
+import { GitHubIcon, GoogleIcon } from "@/components/ui/BrandIcons";
 import { PageShell, Segmented } from "@/components/ui/PageShell";
 import {
   AuthErrorCode,
   sendPasswordReset,
   signInWithPassword,
   signInWithProvider,
-  signOut,
   signUp,
   updateDisplayName,
   updatePassword,
@@ -21,7 +23,6 @@ import { useT } from "@/lib/i18n";
 import { authProviders } from "@/lib/online/supabase";
 import { useHistory, visibleMatches } from "@/lib/store/history";
 import { useSettings } from "@/lib/store/settings";
-import { requestSync } from "@/lib/sync/cloud";
 
 const PROVIDER_LABELS: Partial<Record<Provider, string>> = { google: "Google", github: "GitHub" };
 
@@ -86,9 +87,21 @@ function AuthForms() {
     else run(() => sendPasswordReset(email));
   };
 
+  const oauth = authProviders.length > 0 && mode !== "reset";
+
   return (
-    <>
-      <p className="text-sm text-base-content/70">{t.accountBenefits}</p>
+    <div className="panel relative mt-10 space-y-4 px-4 pt-12 pb-5">
+      <Image
+        src="/brand/logo-256.png"
+        alt=""
+        width={80}
+        height={80}
+        className="absolute -top-10 left-1/2 size-20 -translate-x-1/2 rotate-[-6deg] drop-shadow-lg"
+      />
+      <div className="text-center">
+        <h2 className="font-display text-3xl tracking-wide">{t.authTitle}</h2>
+        <p className="mt-1 text-sm text-base-content/65">{t.authSubtitle}</p>
+      </div>
 
       {mode !== "reset" && (
         <Segmented
@@ -106,42 +119,61 @@ function AuthForms() {
         />
       )}
 
+      {oauth && (
+        <div className="space-y-2">
+          {authProviders.map((p) => (
+            <button
+              key={p}
+              type="button"
+              className={`btn h-12 w-full gap-3 text-base ${p === "google" ? "btn-google" : "btn-github"}`}
+              disabled={busy}
+              onClick={() => run(() => signInWithProvider(p))}
+            >
+              {p === "google" ? <GoogleIcon /> : <GitHubIcon />}
+              {t.continueWith(PROVIDER_LABELS[p] ?? p)}
+            </button>
+          ))}
+          <div className="divider my-1 text-xs text-base-content/50">{t.orUseEmail}</div>
+        </div>
+      )}
+
       <form className="space-y-3" onSubmit={submit}>
         {mode === "signup" && (
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-base-content/70">{t.displayName}</span>
+          <label className="input w-full">
+            <UserRound className="size-4 opacity-60" />
             <input
-              className="input w-full"
               value={name}
               maxLength={24}
               autoComplete="nickname"
-              placeholder={t.displayNamePlaceholder}
+              aria-label={t.displayName}
+              placeholder={t.displayName}
               onChange={(e) => setName(e.target.value)}
             />
           </label>
         )}
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-base-content/70">{t.email}</span>
+        <label className="input w-full">
+          <Mail className="size-4 opacity-60" />
           <input
-            className="input w-full"
             type="email"
             required
             autoComplete="email"
             inputMode="email"
+            aria-label={t.email}
+            placeholder={t.email}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
         {mode !== "reset" && (
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-base-content/70">{t.password}</span>
+          <label className="input w-full">
+            <KeyRound className="size-4 opacity-60" />
             <input
-              className="input w-full"
               type="password"
               required
               minLength={6}
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              placeholder={mode === "signup" ? t.passwordMin : undefined}
+              aria-label={t.password}
+              placeholder={mode === "signup" ? `${t.password} · ${t.passwordMin.toLowerCase()}` : t.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -155,7 +187,7 @@ function AuthForms() {
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary w-full" disabled={busy}>
+        <button type="submit" className="btn btn-primary h-12 w-full font-display text-lg tracking-wide" disabled={busy}>
           {busy ? (
             <span className="loading loading-spinner" />
           ) : mode === "signin" ? (
@@ -178,57 +210,21 @@ function AuthForms() {
           {mode === "reset" ? t.back : t.forgotPassword}
         </button>
       </form>
-
-      {authProviders.length > 0 && mode !== "reset" && (
-        <div className="space-y-2">
-          <div className="divider text-xs text-base-content/50">{t.orContinueWith}</div>
-          {authProviders.map((p) => (
-            <button
-              key={p}
-              type="button"
-              className="btn btn-soft w-full"
-              disabled={busy}
-              onClick={() => run(() => signInWithProvider(p))}
-            >
-              {t.continueWith(PROVIDER_LABELS[p] ?? p)}
-            </button>
-          ))}
-        </div>
-      )}
-    </>
+    </div>
   );
 }
 
 function AccountPanel() {
   const t = useT();
   const user = useAuth((s) => s.user)!;
-  const syncing = useAuth((s) => s.syncing);
-  const syncError = useAuth((s) => s.syncError);
-  const lastSyncedAt = useHistory((s) => s.lastSyncedAt);
   const count = useHistory((s) => visibleMatches(s.matches, user.id).length);
   const settingsName = useSettings((s) => s.name);
   const [name, setName] = useState(user.name ?? settingsName);
   const [savedName, setSavedName] = useState(false);
-  const [busy, setBusy] = useState(false);
 
   return (
     <>
-      <div className="rounded-box bg-base-100 p-4 space-y-1">
-        <p className="text-sm text-base-content/60">{t.signedInAs(user.email ?? "")}</p>
-        <div className="flex items-center gap-2 text-sm">
-          {syncError ? <CloudOff className="size-4 text-warning" /> : <Cloud className="size-4 text-success" />}
-          <span>
-            {syncing
-              ? t.syncing
-              : syncError
-                ? t.syncFailed
-                : lastSyncedAt
-                  ? t.syncedAt(new Date(lastSyncedAt).toLocaleTimeString(t.locale, { hour: "2-digit", minute: "2-digit" }))
-                  : t.syncing}
-          </span>
-        </div>
-        <p className="text-sm text-base-content/60">{t.cloudMatches(count)}</p>
-      </div>
+      <AccountStatusCard />
 
       <form
         className="space-y-1"
@@ -255,27 +251,9 @@ function AccountPanel() {
         </div>
       </form>
 
-      <div className="grid grid-cols-2 gap-2">
-        <button type="button" className="btn btn-soft" disabled={syncing} onClick={() => void requestSync()}>
-          <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} /> {t.syncNow}
-        </button>
-        <Link href="/stats" className="btn btn-soft">
-          {t.stats}
-        </Link>
-      </div>
-
-      <button
-        type="button"
-        className="btn btn-ghost text-error mt-auto"
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          await signOut();
-          setBusy(false);
-        }}
-      >
-        <LogOut className="size-4" /> {t.signOut}
-      </button>
+      <Link href="/stats" className="btn btn-soft">
+        {t.stats} · {t.cloudMatches(count)}
+      </Link>
     </>
   );
 }

@@ -142,10 +142,10 @@ function Lobby({ room, players, mine }: { room: Room; players: RoomPlayer[]; min
 
   return (
     <PageShell title={t.lobby} back="/online">
-      <div className="card bg-base-100">
+      <div className="card panel">
         <div className="card-body items-center gap-1 p-5 text-center">
           <div className="text-sm text-base-content/60">{t.roomCode}</div>
-          <div className="font-mono text-6xl font-black tracking-[0.2em] text-accent">{room.code}</div>
+          <div className="font-mono text-6xl font-black tracking-[0.2em] text-highlight">{room.code}</div>
           <div className="text-sm text-base-content/60">
             {room.config.startScore} · {room.config.doubleOut ? t.doubleOutLower : t.singleOutLower}
             {room.config.legsToWin > 1 && ` · ${t.firstToLower(room.config.legsToWin)}`}
@@ -160,7 +160,7 @@ function Lobby({ room, players, mine }: { room: Room; players: RoomPlayer[]; min
         <div className="text-sm font-medium text-base-content/70">{t.playersCount(players.length)}</div>
         <ul className="space-y-1.5">
           {players.map((p, i) => (
-            <li key={p.id} className="flex items-center gap-3 rounded-field bg-base-100 px-4 py-2.5">
+            <li key={p.id} className="flex items-center gap-3 tile px-4 py-2.5">
               <span className="font-mono text-base-content/40">{i + 1}</span>
               <span className="flex-1 font-semibold">{p.name}</span>
               {mine.has(p.id) && (

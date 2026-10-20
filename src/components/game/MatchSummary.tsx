@@ -22,8 +22,8 @@ export function MatchSummary({ config, players, visits, winnerId, onUndo, action
     <div className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-base-300/80 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-t-box sm:rounded-box bg-base-100 p-5 pb-safe space-y-4 shadow-2xl">
         <div className="text-center">
-          <Trophy className="mx-auto size-12 text-accent" />
-          <h2 className="mt-1 text-3xl font-black">{t.wins(winner?.name ?? "")}</h2>
+          <Trophy className="mx-auto size-12 text-highlight" />
+          <h2 className="mt-1 font-display text-4xl tracking-wide">{t.wins(winner?.name ?? "")}</h2>
           <p className="text-sm text-base-content/60">
             {config.startScore} · {config.doubleOut ? t.doubleOutLower : t.singleOutLower}
             {config.legsToWin > 1 && ` · ${t.firstToLower(config.legsToWin)}`}
@@ -45,7 +45,7 @@ export function MatchSummary({ config, players, visits, winnerId, onUndo, action
             </thead>
             <tbody>
               {rows.map(({ p, s }) => (
-                <tr key={p.id} className={p.id === winnerId ? "text-accent" : ""}>
+                <tr key={p.id} className={p.id === winnerId ? "text-highlight" : ""}>
                   <td className="font-semibold max-w-24 truncate">{p.name}</td>
                   <td className="text-right">{s.average.toFixed(1)}</td>
                   <td className="text-right">{s.first9.toFixed(1)}</td>

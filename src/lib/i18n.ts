@@ -8,11 +8,9 @@ const en = {
   back: "Back",
 
   // Home
-  tagline: "The fastest way to score 301.",
-  greeting: (name: string) => `Game on, ${name}.`,
   resume: "Resume game",
   newGame: "New game",
-  newGameHint: "Solo or pass-and-play on this phone",
+  newGameHint: "Solo or pass-and-play, one phone",
   onlineRoom: "Online room",
   onlineRoomHint: "Every player on their own phone",
   stats: "Stats",
@@ -71,6 +69,8 @@ const en = {
   you: "you",
   last: (n: number) => `last ${n}`,
   dartsN: (n: number) => `${n} darts`,
+  /** Compact form for the scoreboard cards. */
+  dartsShort: (n: number) => `${n} darts`,
   legsWonAria: (n: number) => `${n} legs won`,
 
   // Match summary
@@ -129,7 +129,7 @@ const en = {
   first9Avg: "First 9 avg",
   checkoutPct: "Checkout %",
   highestOut: "Highest out",
-  bestLeg: "Best leg",
+  bestLeg: "Best leg (darts)",
   topVisit: "Top visit",
   legsWon: "Legs won",
   matches: "Matches",
@@ -215,6 +215,37 @@ const en = {
     rate_limited: "Too many attempts — please wait a minute.",
     generic: "Something went wrong. Check your connection and try again.",
   },
+
+  // Stats (redesign)
+  avgTrend: "Average per match",
+  lastMatchAvg: (v: string) => `Last match ${v}`,
+  matchesWins: "Matches · wins",
+  winRate: (pct: number) => `${pct}% won`,
+  checkoutHits: (a: number, b: number) => `${a} of ${b} chances`,
+  ofVisits: (pct: string) => `${pct}% of visits`,
+  recentMatches: "Recent matches",
+  showMore: "Show more",
+  practice: "Practice",
+  legsScore: (me: number, them: number) => `${me}–${them}`,
+  chartTooltip: (date: string, avg: string) => `${date} · avg ${avg}`,
+
+  // Settings (redesign)
+  sectionPreferences: "Preferences",
+  sectionGameDefaults: "Game defaults",
+  sectionGameDefaultsHint: "Pre-selected for every new game and room.",
+  sectionScoring: "Scoring & sound",
+  sectionAccount: "Account & storage",
+  guestStatus: "Playing as a guest",
+  guestStatusHint: "Your history is stored on this phone only.",
+  signedInStatus: "Signed in",
+  localMatches: (n: number) => `${n} match${n === 1 ? "" : "es"} stored on this device`,
+  signInOrUp: "Sign in or create an account",
+  clearLocalHistory: "Clear match history",
+
+  // Login screen
+  authTitle: "Join the game!",
+  authSubtitle: "Save your stats and find them on every device. Optional — guests can keep playing.",
+  orUseEmail: "or with your email",
 };
 
 export type Dict = typeof en;
@@ -223,11 +254,9 @@ const fr: Dict = {
   locale: "fr-FR",
   back: "Retour",
 
-  tagline: "Le moyen le plus rapide de compter au 301.",
-  greeting: (name) => `À vos fléchettes, ${name} !`,
   resume: "Reprendre la partie",
   newGame: "Nouvelle partie",
-  newGameHint: "Solo ou chacun son tour sur ce téléphone",
+  newGameHint: "Solo ou à plusieurs sur ce téléphone",
   onlineRoom: "Salle en ligne",
   onlineRoomHint: "Chaque joueur sur son téléphone",
   stats: "Stats",
@@ -284,6 +313,7 @@ const fr: Dict = {
   you: "vous",
   last: (n) => `dernier ${n}`,
   dartsN: (n) => `${n} fléchettes`,
+  dartsShort: (n) => `${n} fl.`,
   legsWonAria: (n) => `${n} manches gagnées`,
 
   wins: (name) => `${name} gagne !`,
@@ -338,7 +368,7 @@ const fr: Dict = {
   first9Avg: "Moyenne 9 premières",
   checkoutPct: "% de checkout",
   highestOut: "Meilleur checkout",
-  bestLeg: "Meilleure manche",
+  bestLeg: "Meilleure manche (fl.)",
   topVisit: "Meilleure volée",
   legsWon: "Manches gagnées",
   matches: "Matchs",
@@ -422,6 +452,34 @@ const fr: Dict = {
     rate_limited: "Trop de tentatives — patientez une minute.",
     generic: "Une erreur est survenue. Vérifiez votre connexion et réessayez.",
   },
+
+  avgTrend: "Moyenne par match",
+  lastMatchAvg: (v) => `Dernier match ${v}`,
+  matchesWins: "Matchs · victoires",
+  winRate: (pct) => `${pct} % gagnés`,
+  checkoutHits: (a, b) => `${a} sur ${b} occasions`,
+  ofVisits: (pct) => `${pct} % des volées`,
+  recentMatches: "Matchs récents",
+  showMore: "Voir plus",
+  practice: "Entraînement",
+  legsScore: (me, them) => `${me}–${them}`,
+  chartTooltip: (date, avg) => `${date} · moy. ${avg}`,
+
+  sectionPreferences: "Préférences",
+  sectionGameDefaults: "Partie par défaut",
+  sectionGameDefaultsHint: "Présélectionnée pour chaque nouvelle partie et salle.",
+  sectionScoring: "Saisie & son",
+  sectionAccount: "Compte & stockage",
+  guestStatus: "Vous jouez en invité",
+  guestStatusHint: "Votre historique est stocké uniquement sur ce téléphone.",
+  signedInStatus: "Connecté",
+  localMatches: (n) => `${n} match${n > 1 ? "s" : ""} enregistré${n > 1 ? "s" : ""} sur cet appareil`,
+  signInOrUp: "Se connecter ou créer un compte",
+  clearLocalHistory: "Effacer l'historique des matchs",
+
+  authTitle: "Rejoins la partie !",
+  authSubtitle: "Sauvegarde tes stats et retrouve-les sur tous tes appareils. Facultatif : les invités peuvent continuer à jouer.",
+  orUseEmail: "ou avec ton e-mail",
 };
 
 export const DEFAULT_LANG: Lang = "fr";

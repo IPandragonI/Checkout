@@ -4,79 +4,90 @@
   themes: false;
 }
 
-/* Dartboard palette: green doubles, red trebles, gold highlights.
+/* Palette: #386641 deep green, #6a994e mid green, #a7c957 lime, #f2e8cf cream, #bc4749 red.
    The theme is chosen in Settings (light by default) and applied as data-theme on <html>. */
 @plugin "daisyui/theme" {
   name: "checkout-light";
   default: true;
   color-scheme: light;
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(96.5% 0.008 260);
-  --color-base-300: oklch(91% 0.014 260);
-  --color-base-content: oklch(24% 0.035 262);
-  --color-primary: oklch(57% 0.15 152);
-  --color-primary-content: oklch(99% 0.01 152);
-  --color-secondary: oklch(55% 0.2 25);
-  --color-secondary-content: oklch(99% 0.01 25);
-  --color-accent: oklch(64% 0.16 62);
-  --color-accent-content: oklch(20% 0.04 62);
-  --color-neutral: oklch(30% 0.04 262);
-  --color-neutral-content: oklch(97% 0.008 262);
-  --color-info: oklch(55% 0.15 245);
-  --color-info-content: oklch(99% 0.01 245);
-  --color-success: oklch(57% 0.15 152);
-  --color-success-content: oklch(99% 0.01 152);
-  --color-warning: oklch(66% 0.16 62);
-  --color-warning-content: oklch(20% 0.04 62);
-  --color-error: oklch(55% 0.2 25);
-  --color-error-content: oklch(99% 0.01 25);
+  --color-base-100: #fbf6e9;
+  --color-base-200: #f2e8cf;
+  --color-base-300: #e3d4ab;
+  --color-base-content: #1e3323;
+  --color-primary: #386641;
+  --color-primary-content: #f7f0dc;
+  --color-secondary: #bc4749;
+  --color-secondary-content: #fff8ee;
+  --color-accent: #a7c957;
+  --color-accent-content: #1e3323;
+  --color-neutral: #2b4a33;
+  --color-neutral-content: #f2e8cf;
+  --color-info: #3f7d8c;
+  --color-info-content: #fff8ee;
+  --color-success: #6a994e;
+  --color-success-content: #10200f;
+  --color-warning: #c98424;
+  --color-warning-content: #2a1a05;
+  --color-error: #bc4749;
+  --color-error-content: #fff8ee;
   --radius-selector: 1rem;
-  --radius-field: 0.75rem;
-  --radius-box: 1.25rem;
+  --radius-field: 0.9rem;
+  --radius-box: 1.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 0;
+  --border: 2px;
+  --depth: 1;
   --noise: 0;
 }
 
-/* Deep navy rather than black. */
+/* Deep forest-green slates, cream text, vibrant lime and red accents. */
 @plugin "daisyui/theme" {
   name: "checkout-dark";
   color-scheme: dark;
-  --color-base-100: oklch(27.5% 0.05 263);
-  --color-base-200: oklch(21% 0.048 265);
-  --color-base-300: oklch(34% 0.055 263);
-  --color-base-content: oklch(96% 0.012 250);
-  --color-primary: oklch(74% 0.16 152);
-  --color-primary-content: oklch(18% 0.04 152);
-  --color-secondary: oklch(66% 0.2 22);
-  --color-secondary-content: oklch(99% 0.01 22);
-  --color-accent: oklch(86% 0.15 88);
-  --color-accent-content: oklch(22% 0.05 88);
-  --color-neutral: oklch(36% 0.055 263);
-  --color-neutral-content: oklch(95% 0.012 250);
-  --color-info: oklch(74% 0.13 230);
-  --color-info-content: oklch(20% 0.04 230);
-  --color-success: oklch(74% 0.16 152);
-  --color-success-content: oklch(18% 0.04 152);
-  --color-warning: oklch(83% 0.15 78);
-  --color-warning-content: oklch(22% 0.05 78);
-  --color-error: oklch(66% 0.2 22);
-  --color-error-content: oklch(99% 0.01 22);
+  --color-base-100: #1a2e22;
+  --color-base-200: #102018;
+  --color-base-300: #284330;
+  --color-base-content: #f2e8cf;
+  --color-primary: #6a994e;
+  --color-primary-content: #0c1a10;
+  --color-secondary: #d35d5f;
+  --color-secondary-content: #fff8ee;
+  --color-accent: #a7c957;
+  --color-accent-content: #0c1a10;
+  --color-neutral: #2c4836;
+  --color-neutral-content: #f2e8cf;
+  --color-info: #6fb1c0;
+  --color-info-content: #0c1a10;
+  --color-success: #a7c957;
+  --color-success-content: #0c1a10;
+  --color-warning: #e6b450;
+  --color-warning-content: #1e1404;
+  --color-error: #d35d5f;
+  --color-error-content: #fff8ee;
   --radius-selector: 1rem;
-  --radius-field: 0.75rem;
-  --radius-box: 1.25rem;
+  --radius-field: 0.9rem;
+  --radius-box: 1.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 0;
+  --border: 2px;
+  --depth: 1;
   --noise: 0;
+}
+
+/* Readable "lime" for text: the lime itself is too light on cream. */
+:root,
+[data-theme="checkout-light"] {
+  --highlight: #4e7d34;
+}
+[data-theme="checkout-dark"] {
+  --highlight: #c5e17a;
 }
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-lilita);
+  --color-highlight: var(--highlight);
 }
 
 html,
@@ -102,6 +113,61 @@ button {
   touch-action: manipulation;
 }
 
+/* ---- Arcade look ------------------------------------------------------- */
+
+/* Tactile buttons: a solid "edge" in a darker shade of the button colour, pressed down on tap. */
+.btn:not(.btn-ghost, .btn-link) {
+  --btn-border: color-mix(in oklab, var(--btn-bg), #000 22%);
+  --btn-shadow: 0 4px 0 0 color-mix(in oklab, var(--btn-bg), #000 32%);
+  --btn-inset: 0 2px 0 0 oklch(100% 0 0 / 0.18);
+}
+.btn:not(.btn-ghost, .btn-link):active:not(:disabled) {
+  translate: 0 3px;
+  --btn-shadow: 0 1px 0 0 color-mix(in oklab, var(--btn-bg), #000 32%);
+}
+
+/* OAuth buttons: Google's branding colours (light/dark), GitHub's dark mark button. */
+.btn.btn-google {
+  --btn-bg: #ffffff;
+  --btn-fg: #1f1f1f;
+  --btn-border: #747775;
+}
+[data-theme="checkout-dark"] .btn.btn-google {
+  --btn-bg: #131314;
+  --btn-fg: #e3e3e3;
+  --btn-border: #8e918f;
+}
+.btn.btn-github {
+  --btn-bg: #24292f;
+  --btn-fg: #ffffff;
+  --btn-border: #57606a;
+}
+
+/* Chunky outlined cards. */
+.panel {
+  border-radius: var(--radius-box);
+  background: var(--color-base-100);
+  border: 2px solid color-mix(in oklab, var(--color-base-content) 14%, transparent);
+  box-shadow: 0 5px 0 0 color-mix(in oklab, var(--color-base-content) 14%, transparent);
+}
+
+/* Smaller rows (list items, toggles) in the same style. */
+.tile {
+  border-radius: var(--radius-field);
+  background: var(--color-base-100);
+  border: 2px solid color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  box-shadow: 0 3px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent);
+}
+
+/* Logo-style title: cream letters on a red offset edge. */
+.hero-title {
+  color: #f2e8cf;
+  text-shadow:
+    0 3px 0 #bc4749,
+    0 6px 0 #7a2b2c,
+    0 10px 18px rgb(0 0 0 / 0.45);
+}
+
 .pt-safe {
   padding-top: max(env(safe-area-inset-top), 0.5rem);
 }
@@ -112,4 +178,25 @@ button {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Swipeable tracks (player carousel, chips) without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chart tokens (dataviz): series in brand mid green, validated on both card surfaces. */
+:root,
+[data-theme="checkout-light"] {
+  --chart-series: #6a994e;
+  --chart-track: #ece2c6;
+  --chart-grid: color-mix(in oklab, #1e3323 10%, transparent);
+}
+[data-theme="checkout-dark"] {
+  --chart-series: #6a994e;
+  --chart-track: #284330;
+  --chart-grid: color-mix(in oklab, #f2e8cf 12%, transparent);
 }

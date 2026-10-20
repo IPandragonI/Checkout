@@ -24,7 +24,7 @@ export function ConfigFields({ value, onChange }: { value: GameConfig; onChange:
           onChange={(legsToWin) => onChange({ ...value, legsToWin })}
         />
       </div>
-      <label className="flex items-center justify-between rounded-field bg-base-100 px-4 py-3">
+      <label className="flex items-center justify-between tile px-4 py-3">
         <span>
           <span className="font-medium">{t.doubleOut}</span>
           <span className="block text-xs text-base-content/60">{t.doubleOutHint}</span>

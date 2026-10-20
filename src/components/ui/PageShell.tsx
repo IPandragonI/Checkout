@@ -25,7 +25,7 @@ export function PageShell({
             <ArrowLeft className="size-5" />
           </Link>
         )}
-        <h1 className="flex-1 text-xl font-bold">{title}</h1>
+        <h1 className="flex-1 font-display text-2xl tracking-wide">{title}</h1>
         <Link href="/" aria-label="Checkout" className="shrink-0">
           <Image src="/brand/logo-256.png" alt="" width={32} height={32} className="size-8 rounded-[7px]" />
         </Link>

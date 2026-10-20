@@ -7,8 +7,8 @@ import sharp from "sharp";
 const path = (p) => fileURLToPath(new URL(p, import.meta.url));
 const SOURCE = path("../assets/brand/logo.png");
 const SPLASH_SCREENS = JSON.parse(readFileSync(path("../src/lib/splash-screens.json"), "utf8"));
-/** Light splash background: the light theme's base-200. */
-const SPLASH_BG = "#f2f4f8";
+/** Splash background: the light theme's cream base-200. */
+const SPLASH_BG = "#f2e8cf";
 
 const meta = await sharp(SOURCE).metadata();
 if (meta.width !== meta.height) throw new Error(`Logo must be square, got ${meta.width}x${meta.height}`);
@@ -40,6 +40,16 @@ function fullBleed(size) {
     .extract({ left: BLEED_INSET, top: BLEED_INSET, width: side, height: side })
     .resize(size, size, { kernel: "lanczos3" })
     .png({ compressionLevel: 9, palette: true, quality: 92, effort: 10 })
+    .toBuffer();
+}
+
+/** Edge-to-edge artwork for the home-screen hero banner. */
+function hero(size) {
+  const side = SIZE - 2 * BLEED_INSET;
+  return sharp(SOURCE)
+    .extract({ left: BLEED_INSET, top: BLEED_INSET, width: side, height: side })
+    .resize(size, size, { kernel: "lanczos3" })
+    .webp({ quality: 82, effort: 6 })
     .toBuffer();
 }
 
@@ -80,6 +90,7 @@ const outputs = {
   "../public/icons/icon-maskable-512.png": fullBleed(512),
   "../public/icons/apple-touch-icon.png": fullBleed(180),
   "../public/brand/logo-256.png": rounded(256),
+  "../public/brand/hero.webp": hero(1080),
   "../src/app/favicon.ico": Promise.all([16, 32, 48].map(async (size) => ({ size, data: await rounded(size) }))).then(ico),
 };
 for (const s of SPLASH_SCREENS) {
