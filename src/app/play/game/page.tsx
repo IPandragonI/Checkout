@@ -31,6 +31,7 @@ export default function LocalGamePage() {
       onUndo={() => {
         undo();
       }}
+      startedAt={match.startedAt}
       onExit={() => router.push("/")}
       title={match.players.length === 1 ? t.soloPractice : match.players.map((p) => p.name).join(` ${t.vs} `)}
       matchOverActions={

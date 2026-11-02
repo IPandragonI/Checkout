@@ -1,5 +1,5 @@
 import { useAuth } from "@/lib/auth/store";
-import { supabase } from "@/lib/online/supabase";
+import { supabase } from "@/lib/supabase";
 import { MatchRecord, useHistory } from "@/lib/store/history";
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- rows come untyped from PostgREST */
@@ -7,23 +7,26 @@ const toRow = (m: MatchRecord, userId: string) => ({
   user_id: userId,
   id: m.id,
   played_at: new Date(m.playedAt).toISOString(),
-  mode: m.mode,
-  room_code: m.roomCode ?? null,
-  config: m.config,
+  // Columns kept for the existing schema; `startedAt` rides along in the config JSON.
+  mode: "local",
+  room_code: null,
+  config: { ...m.config, startedAt: m.startedAt },
   players: m.players,
   visits: m.visits,
 });
 
-const fromRow = (r: any): MatchRecord => ({
-  id: r.id,
-  owner: r.user_id,
-  playedAt: Date.parse(r.played_at),
-  mode: r.mode,
-  roomCode: r.room_code ?? undefined,
-  config: r.config,
-  players: r.players,
-  visits: r.visits,
-});
+const fromRow = (r: any): MatchRecord => {
+  const { startedAt, ...config } = r.config;
+  return {
+    id: r.id,
+    owner: r.user_id,
+    playedAt: Date.parse(r.played_at),
+    startedAt: typeof startedAt === "number" ? startedAt : undefined,
+    config,
+    players: r.players,
+    visits: r.visits,
+  };
+};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const PULL_LIMIT = 1000;

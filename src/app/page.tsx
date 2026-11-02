@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartColumn, Play, Settings, Users, Wifi } from "lucide-react";
+import { ChartColumn, Play, Settings, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AccountButton, GuestPrompt } from "@/components/ui/AccountPrompts";
@@ -64,10 +64,6 @@ export default function Home() {
         <ActionButton href="/play" className="btn-primary" icon={<Users className="size-6" />}>
           {t.newGame}
           <Hint>{t.newGameHint}</Hint>
-        </ActionButton>
-        <ActionButton href="/online" className="btn-secondary" icon={<Wifi className="size-6" />}>
-          {t.onlineRoom}
-          <Hint>{t.onlineRoomHint}</Hint>
         </ActionButton>
 
         <GuestPrompt />

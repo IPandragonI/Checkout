@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth/store";
-import { onlineEnabled, supabase } from "@/lib/online/supabase";
+import { onlineEnabled, supabase } from "@/lib/supabase";
 import { useHistory } from "@/lib/store/history";
 import { useSettings } from "@/lib/store/settings";
 import { requestSync } from "@/lib/sync/cloud";

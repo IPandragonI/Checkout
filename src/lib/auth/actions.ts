@@ -1,5 +1,5 @@
 import type { AuthError, Provider } from "@supabase/supabase-js";
-import { supabase } from "@/lib/online/supabase";
+import { supabase } from "@/lib/supabase";
 import { useHistory } from "@/lib/store/history";
 import { useSettings } from "@/lib/store/settings";
 import { requestSync } from "@/lib/sync/cloud";

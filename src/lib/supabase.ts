@@ -3,7 +3,7 @@ import { createClient, Provider, SupabaseClient } from "@supabase/supabase-js";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-/** Online rooms and accounts are optional: without env vars the app runs fully offline. */
+/** Accounts are optional: without env vars the app runs fully offline. */
 export const onlineEnabled = Boolean(url && key);
 
 /** OAuth buttons to show, e.g. "google,github". Each must also be enabled in the Supabase dashboard. */
@@ -28,7 +28,6 @@ export function supabase(): SupabaseClient {
       flowType: "pkce",
       storageKey: "checkout-auth",
     },
-    realtime: { params: { eventsPerSecond: 20 } },
   });
   return client;
 }

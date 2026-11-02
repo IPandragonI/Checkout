@@ -20,7 +20,7 @@ import {
 import { useAuth } from "@/lib/auth/store";
 import { useHydrated } from "@/lib/hooks";
 import { useT } from "@/lib/i18n";
-import { authProviders } from "@/lib/online/supabase";
+import { authProviders } from "@/lib/supabase";
 import { useHistory, visibleMatches } from "@/lib/store/history";
 import { useSettings } from "@/lib/store/settings";
 

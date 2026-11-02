@@ -6,7 +6,6 @@ const match = (id: string, playedAt = 1, owner?: string): MatchRecord => ({
   id,
   playedAt,
   owner,
-  mode: "local",
   config: { startScore: 301, doubleOut: true, legsToWin: 1 },
   players: [{ id: "p", name: "Ann" }],
   visits: [],

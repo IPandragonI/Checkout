@@ -6,8 +6,8 @@ import type { GameConfig, Player, Visit } from "@/lib/darts/game";
 export interface MatchRecord {
   id: string;
   playedAt: number;
-  mode: "local" | "online";
-  roomCode?: string;
+  /** When the match started; with `playedAt` (finish time) it gives the match duration. */
+  startedAt?: number;
   config: GameConfig;
   players: Player[];
   visits: Visit[];
@@ -27,7 +27,7 @@ interface HistoryState {
   /** Synced matches deleted locally, to delete in the cloud. */
   deleted: Tombstone[];
   lastSyncedAt: number | null;
-  /** Insert or replace by id (online matches may be saved more than once). */
+  /** Insert or replace by id (a match is re-saved after an undo or a replay). */
   save: (m: MatchRecord) => void;
   remove: (id: string) => void;
   clear: () => void;

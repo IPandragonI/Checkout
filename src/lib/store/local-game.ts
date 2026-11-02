@@ -26,7 +26,7 @@ function syncHistory(match: LocalMatch) {
   const done = replay(match.config, match.players, match.visits).winnerId !== null;
   const history = useHistory.getState();
   if (done) {
-    history.save({ ...match, playedAt: Date.now(), mode: "local" });
+    history.save({ ...match, playedAt: Date.now() });
   } else {
     history.remove(match.id);
   }

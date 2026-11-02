@@ -30,15 +30,14 @@ interface Props {
   players: Player[];
   visits: Visit[];
   onSubmit: (playerId: string, input: VisitInput) => void;
-  /** Removes the last visit. Should throw if that fails. */
+  /** Removes the last visit. */
   onUndo: () => Promise<void> | void;
   onExit: () => void;
   title: string;
-  /** Players this device controls. Undefined means every player (pass-and-play). */
-  myPlayerIds?: Set<string>;
+  /** Match start time, for the duration shown in the end-of-match stats. */
+  startedAt?: number;
   /** Buttons shown in the match-over sheet (rematch, home…). */
   matchOverActions: React.ReactNode;
-  banner?: React.ReactNode;
 }
 
 const DOUBLE_TAP_GUARD_MS = 350;
@@ -51,9 +50,8 @@ export function GameScreen({
   onUndo,
   onExit,
   title,
-  myPlayerIds,
+  startedAt,
   matchOverActions,
-  banner,
 }: Props) {
   useWakeLock();
   const t = useT();
@@ -66,8 +64,7 @@ export function GameScreen({
   const [total, setTotal] = useState("");
   const [totalError, setTotalError] = useState<string | null>(null);
   const [askCheckoutDarts, setAskCheckoutDarts] = useState<{ total: number; min: number } | null>(null);
-  const [unlockedFor, setUnlockedFor] = useState<string | null>(null);
-  /** Visit to reopen for editing once an undo lands (local or remote). */
+  /** Visit to reopen for editing once an undo lands. */
   const [restore, setRestore] = useState<{ darts: Dart[]; total: string } | null>(null);
   const lastSubmitAt = useRef(0);
 
@@ -93,11 +90,10 @@ export function GameScreen({
       ? doubleRoute
       : null;
 
-  const mine = (id: string) => !myPlayerIds || myPlayerIds.has(id);
-  const canScore = currentId !== null && (mine(currentId) || unlockedFor === currentId);
+  const canScore = currentId !== null;
   const currentPlayer = players.find((p) => p.id === currentId);
 
-  // Reset the visit in progress whenever the turn moves (including remote updates).
+  // Reset the visit in progress whenever the turn moves.
   const turnKey = `${currentId}:${state.played.length}`;
   const [seenTurn, setSeenTurn] = useState(turnKey);
   if (seenTurn !== turnKey) {
@@ -152,7 +148,6 @@ export function GameScreen({
     }
     const last = visits.at(-1);
     if (!last) return;
-    setUnlockedFor(last.playerId);
     setRestore({
       darts: last.darts?.slice(0, -1) ?? [],
       total: last.bust || last.darts ? "" : String(last.score).slice(0, -1),
@@ -227,10 +222,9 @@ export function GameScreen({
         lastScore,
         dartsInLeg,
         isCurrent,
-        isMine: !!myPlayerIds?.has(p.id),
       };
     });
-  }, [players, state, currentId, inputMode, pending.length, live.remaining, live.status, myPlayerIds]);
+  }, [players, state, currentId, inputMode, pending.length, live.remaining, live.status]);
 
   const legNotice = (() => {
     const inLeg = state.played.filter((p) => p.leg === state.leg).length;
@@ -290,7 +284,6 @@ export function GameScreen({
         </div>
       </header>
 
-      {banner}
       <Scoreboard lines={lines} legsToWin={config.legsToWin} />
 
       {inputMode === "darts" ? (
@@ -349,15 +342,6 @@ export function GameScreen({
             error={totalError}
           />
         )}
-
-        {!canScore && currentPlayer && !state.winnerId && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-box bg-base-200/85 backdrop-blur-[2px] text-center">
-            <p className="text-lg font-semibold">{t.waitingFor(currentPlayer.name)}</p>
-            <button type="button" className="btn btn-outline btn-sm" onClick={() => setUnlockedFor(currentPlayer.id)}>
-              {t.scoreFor(currentPlayer.name)}
-            </button>
-          </div>
-        )}
       </div>
 
       {askCheckoutDarts && (
@@ -391,6 +375,7 @@ export function GameScreen({
           players={players}
           visits={visits}
           winnerId={state.winnerId}
+          startedAt={startedAt}
           onUndo={() => void onUndo()}
           actions={matchOverActions}
         />

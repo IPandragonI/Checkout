@@ -13,7 +13,6 @@ export interface PlayerLine {
   lastScore: number | null;
   dartsInLeg: number;
   isCurrent: boolean;
-  isMine: boolean;
 }
 
 /** After a manual swipe, the carousel drifts back to the player on the oche. */
@@ -126,7 +125,6 @@ function PlayerCard({ line: l, legsToWin }: { line: PlayerLine; legsToWin: numbe
       <div className="flex items-center gap-1.5 text-sm font-semibold">
         {l.isCurrent && <span className="size-2 shrink-0 rounded-full bg-primary animate-pulse" />}
         <span className="truncate">{l.player.name}</span>
-        {l.isMine && <span className="badge badge-xs badge-ghost">{t.you}</span>}
         {legsToWin > 1 && (
           <span className="ml-auto flex gap-0.5" aria-label={t.legsWonAria(l.legsWon)}>
             {Array.from({ length: legsToWin }, (_, i) => (

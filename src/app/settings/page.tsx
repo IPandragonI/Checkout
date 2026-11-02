@@ -8,7 +8,7 @@ import { PageShell, Segmented } from "@/components/ui/PageShell";
 import { useAuth } from "@/lib/auth/store";
 import { useHydrated } from "@/lib/hooks";
 import { useT } from "@/lib/i18n";
-import { onlineEnabled } from "@/lib/online/supabase";
+import { onlineEnabled } from "@/lib/supabase";
 import { useHistory, visibleMatches } from "@/lib/store/history";
 import { InputMode, Lang, Theme, useSettings } from "@/lib/store/settings";
 

@@ -3,6 +3,7 @@
 import { ArrowUp, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FirstPlayerDraw } from "@/components/game/FirstPlayerDraw";
 import { ConfigFields } from "@/components/ui/ConfigFields";
 import { PageShell } from "@/components/ui/PageShell";
 import type { GameConfig } from "@/lib/darts/game";
@@ -34,11 +35,27 @@ function SetupForm() {
     setNames(next);
   };
 
+  /** Players in throwing order plus who the draw picked; set while the draw animation plays. */
+  const [draw, setDraw] = useState<{ order: string[]; winnerIndex: number } | null>(null);
+
+  const begin = (order: string[]) => {
+    start(config, order);
+    router.push("/play/game");
+  };
+
   const onStart = () => {
     const cleaned = names.map((n, i) => n.trim() || t.playerN(i + 1));
     settings.set({ lastConfig: config, lastPlayers: cleaned });
-    start(config, cleaned);
-    router.push("/play/game");
+    if (cleaned.length < 2) return begin(cleaned);
+    setDraw({ order: cleaned, winnerIndex: Math.floor(Math.random() * cleaned.length) });
+  };
+
+  // The drawn player throws first: rotate the order so they lead, keeping everyone else in sequence.
+  const finishDraw = () => {
+    if (!draw) return;
+    const { order, winnerIndex } = draw;
+    setDraw(null);
+    begin([...order.slice(winnerIndex), ...order.slice(0, winnerIndex)]);
   };
 
   return (
@@ -84,6 +101,8 @@ function SetupForm() {
           </button>
         )}
       </section>
+
+      {draw && <FirstPlayerDraw names={draw.order} winnerIndex={draw.winnerIndex} onDone={finishDraw} />}
 
       <div className="mt-auto pt-2">
         <button type="button" className="btn btn-primary btn-lg w-full" onClick={onStart}>
