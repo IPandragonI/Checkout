@@ -12,7 +12,7 @@ export default function LocalGamePage() {
   const hydrated = useHydrated();
   const router = useRouter();
   const t = useT();
-  const { match, submit, undo, rematch, quit } = useLocalGame();
+  const { match, submit, undo, rematch } = useLocalGame();
 
   useEffect(() => {
     if (hydrated && !match) router.replace("/play");
@@ -31,7 +31,7 @@ export default function LocalGamePage() {
       onUndo={() => {
         undo();
       }}
-      startedAt={match.startedAt}
+      activeMs={match.activeMs}
       onExit={() => router.push("/")}
       title={match.players.length === 1 ? t.soloPractice : match.players.map((p) => p.name).join(` ${t.vs} `)}
       matchOverActions={
@@ -39,8 +39,13 @@ export default function LocalGamePage() {
           <button type="button" className="btn btn-primary btn-lg" onClick={rematch}>
             {t.rematch}
           </button>
+          {match.sessionId && (
+            <Link href={`/stats?s=${encodeURIComponent(match.sessionId)}`} className="btn btn-soft">
+              {t.sessionStatsLink}
+            </Link>
+          )}
           <div className="grid grid-cols-2 gap-2">
-            <Link href="/play" className="btn btn-soft" onClick={quit}>
+            <Link href="/play" className="btn btn-soft">
               {t.newGame}
             </Link>
             <Link href="/" className="btn btn-soft">

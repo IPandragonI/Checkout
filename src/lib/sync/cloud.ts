@@ -7,26 +7,25 @@ const toRow = (m: MatchRecord, userId: string) => ({
   user_id: userId,
   id: m.id,
   played_at: new Date(m.playedAt).toISOString(),
-  // Columns kept for the existing schema; `startedAt` rides along in the config JSON.
-  mode: "local",
-  room_code: null,
-  config: { ...m.config, startedAt: m.startedAt },
+  started_at: m.startedAt ? new Date(m.startedAt).toISOString() : null,
+  active_ms: m.activeMs ?? null,
+  session_id: m.sessionId ?? null,
+  config: m.config,
   players: m.players,
   visits: m.visits,
 });
 
-const fromRow = (r: any): MatchRecord => {
-  const { startedAt, ...config } = r.config;
-  return {
-    id: r.id,
-    owner: r.user_id,
-    playedAt: Date.parse(r.played_at),
-    startedAt: typeof startedAt === "number" ? startedAt : undefined,
-    config,
-    players: r.players,
-    visits: r.visits,
-  };
-};
+const fromRow = (r: any): MatchRecord => ({
+  id: r.id,
+  owner: r.user_id,
+  playedAt: Date.parse(r.played_at),
+  startedAt: r.started_at ? Date.parse(r.started_at) : undefined,
+  activeMs: r.active_ms ?? undefined,
+  sessionId: r.session_id ?? undefined,
+  config: r.config,
+  players: r.players,
+  visits: r.visits,
+});
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const PULL_LIMIT = 1000;
@@ -54,7 +53,7 @@ async function syncOnce(userId: string) {
 
   const { data, error } = await supabase()
     .from("matches")
-    .select("id, user_id, played_at, mode, room_code, config, players, visits")
+    .select("id, user_id, played_at, started_at, active_ms, session_id, config, players, visits")
     .eq("user_id", userId)
     .order("played_at", { ascending: false })
     .limit(PULL_LIMIT);

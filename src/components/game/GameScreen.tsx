@@ -34,8 +34,8 @@ interface Props {
   onUndo: () => Promise<void> | void;
   onExit: () => void;
   title: string;
-  /** Match start time, for the duration shown in the end-of-match stats. */
-  startedAt?: number;
+  /** Playing time, shown in the end-of-match stats. */
+  activeMs?: number;
   /** Buttons shown in the match-over sheet (rematch, home…). */
   matchOverActions: React.ReactNode;
 }
@@ -50,7 +50,7 @@ export function GameScreen({
   onUndo,
   onExit,
   title,
-  startedAt,
+  activeMs,
   matchOverActions,
 }: Props) {
   useWakeLock();
@@ -375,7 +375,7 @@ export function GameScreen({
           players={players}
           visits={visits}
           winnerId={state.winnerId}
-          startedAt={startedAt}
+          activeMs={activeMs}
           onUndo={() => void onUndo()}
           actions={matchOverActions}
         />

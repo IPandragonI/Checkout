@@ -8,6 +8,10 @@ export interface MatchRecord {
   playedAt: number;
   /** When the match started; with `playedAt` (finish time) it gives the match duration. */
   startedAt?: number;
+  /** Time spent playing, with long pauses left out (ms). */
+  activeMs?: number;
+  /** Matches played together (rematches, same evening) form a session. */
+  sessionId?: string;
   config: GameConfig;
   players: Player[];
   visits: Visit[];
@@ -31,6 +35,8 @@ interface HistoryState {
   save: (m: MatchRecord) => void;
   remove: (id: string) => void;
   clear: () => void;
+  /** Adds matches from a backup; an existing match is only replaced by a more recent copy. */
+  importMatches: (list: MatchRecord[]) => { added: number; skipped: number };
   // Sync bookkeeping, used by lib/sync/cloud.ts
   claimGuestMatches: (owner: string) => void;
   markUploaded: (ids: string[]) => void;
@@ -43,7 +49,7 @@ const addId = (list: string[], id: string) => (list.includes(id) ? list : [...li
 
 export const useHistory = create<HistoryState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       matches: [],
       dirty: [],
       deleted: [],
@@ -66,6 +72,21 @@ export const useHistory = create<HistoryState>()(
             deleted: m?.owner ? [...s.deleted, { id, owner: m.owner }] : s.deleted,
           };
         }),
+      importMatches: (list) => {
+        const existing = new Map(get().matches.map((m) => [m.id, m]));
+        let added = 0;
+        let skipped = 0;
+        for (const m of list) {
+          const have = existing.get(m.id);
+          if (have && have.playedAt >= m.playedAt) {
+            skipped++;
+            continue;
+          }
+          get().save({ ...m, owner: undefined });
+          added++;
+        }
+        return { added, skipped };
+      },
       clear: () => {
         const owner = currentUserId();
         set((s) => ({

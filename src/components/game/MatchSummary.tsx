@@ -1,5 +1,4 @@
 import { Trophy, Undo2 } from "lucide-react";
-import { useState } from "react";
 import type { GameConfig, Player, Visit } from "@/lib/darts/game";
 import { useT } from "@/lib/i18n";
 import { SaveStatsLink } from "@/components/ui/AccountPrompts";
@@ -10,16 +9,15 @@ interface Props {
   players: Player[];
   visits: Visit[];
   winnerId: string;
-  startedAt?: number;
+  /** Time spent playing the match (ms). */
+  activeMs?: number;
   onUndo: () => void;
   actions: React.ReactNode;
 }
 
-export function MatchSummary({ config, players, visits, winnerId, startedAt, onUndo, actions }: Props) {
+export function MatchSummary({ config, players, visits, winnerId, activeMs, onUndo, actions }: Props) {
   const t = useT();
   const winner = players.find((p) => p.id === winnerId);
-  // Frozen when the summary opens, so the duration doesn't keep growing.
-  const [finishedAt] = useState(() => Date.now());
 
   return (
     <div className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-base-300/80 backdrop-blur-sm">
@@ -33,7 +31,7 @@ export function MatchSummary({ config, players, visits, winnerId, startedAt, onU
           </p>
         </div>
 
-        <MatchStats match={{ config, players, visits }} durationMs={startedAt ? finishedAt - startedAt : undefined} />
+        <MatchStats match={{ config, players, visits }} durationMs={activeMs} />
 
         <div className="grid gap-2">{actions}</div>
         <button type="button" className="btn btn-ghost btn-sm w-full" onClick={onUndo}>

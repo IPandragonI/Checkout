@@ -1,12 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { GameConfig, Player, replay, Visit, VisitInput } from "@/lib/darts/game";
+import { GameConfig, Player, Visit, VisitInput } from "@/lib/darts/game";
+import { addActiveTime } from "@/lib/darts/session";
 import { uid } from "@/lib/id";
 import { useHistory } from "./history";
 
 export interface LocalMatch {
   id: string;
   startedAt: number;
+  /** Matches of one sitting share a session; rematches keep it. */
+  sessionId?: string;
+  /** Playing time so far, idle gaps capped (ms). */
+  activeMs?: number;
+  lastActiveAt?: number;
   config: GameConfig;
   players: Player[];
   visits: Visit[];
@@ -14,7 +20,8 @@ export interface LocalMatch {
 
 interface LocalGameState {
   match: LocalMatch | null;
-  start: (config: GameConfig, names: string[]) => void;
+  /** Starts a match; pass `sessionId` to continue the session of the previous one. */
+  start: (config: GameConfig, names: string[], sessionId?: string) => void;
   submit: (playerId: string, input: VisitInput) => void;
   /** Removes and returns the last visit. */
   undo: () => Visit | null;
@@ -22,25 +29,29 @@ interface LocalGameState {
   quit: () => void;
 }
 
+/** Every match with at least one visit is kept, finished or not; an empty one leaves no trace. */
 function syncHistory(match: LocalMatch) {
-  const done = replay(match.config, match.players, match.visits).winnerId !== null;
   const history = useHistory.getState();
-  if (done) {
-    history.save({ ...match, playedAt: Date.now() });
-  } else {
+  if (match.visits.length === 0) {
     history.remove(match.id);
+    return;
   }
+  const { id, startedAt, sessionId, activeMs, config, players, visits } = match;
+  history.save({ id, startedAt, sessionId, activeMs, config, players, visits, playedAt: Date.now() });
 }
 
 export const useLocalGame = create<LocalGameState>()(
   persist(
     (set, get) => ({
       match: null,
-      start: (config, names) =>
+      start: (config, names, sessionId) =>
         set({
           match: {
             id: uid(),
             startedAt: Date.now(),
+            lastActiveAt: Date.now(),
+            activeMs: 0,
+            sessionId: sessionId ?? uid(),
             config,
             players: names.map((name) => ({ id: uid(), name })),
             visits: [],
@@ -49,7 +60,13 @@ export const useLocalGame = create<LocalGameState>()(
       submit: (playerId, input) => {
         const m = get().match;
         if (!m) return;
-        const match = { ...m, visits: [...m.visits, { ...input, id: uid(), playerId }] };
+        const now = Date.now();
+        const match = {
+          ...m,
+          visits: [...m.visits, { ...input, id: uid(), playerId }],
+          activeMs: addActiveTime(m.activeMs ?? 0, m.lastActiveAt ?? m.startedAt, now),
+          lastActiveAt: now,
+        };
         set({ match });
         syncHistory(match);
       },
@@ -67,7 +84,10 @@ export const useLocalGame = create<LocalGameState>()(
         if (!m) return;
         // Loser of the last match throws first: rotate the order by one.
         const players = [...m.players.slice(1), m.players[0]].map((p) => ({ ...p, id: uid() }));
-        set({ match: { id: uid(), startedAt: Date.now(), config: m.config, players, visits: [] } });
+        const now = Date.now();
+        set({
+          match: { id: uid(), startedAt: now, lastActiveAt: now, activeMs: 0, sessionId: m.sessionId ?? uid(), config: m.config, players, visits: [] },
+        });
       },
       quit: () => set({ match: null }),
     }),

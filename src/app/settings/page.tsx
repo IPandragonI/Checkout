@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronRight, Database, Gamepad2, Info, Moon, SlidersHorizontal, Sun, Target, Trash2 } from "lucide-react";
+import { ChevronRight, Database, Download, Gamepad2, Info, Moon, SlidersHorizontal, Sun, Target, Trash2, Upload } from "lucide-react";
 import Link from "next/link";
+import { useMemo, useRef, useState } from "react";
 import { AccountStatusCard } from "@/components/ui/AccountPrompts";
 import { ConfigFields } from "@/components/ui/ConfigFields";
 import { PageShell, Segmented } from "@/components/ui/PageShell";
@@ -9,6 +10,7 @@ import { useAuth } from "@/lib/auth/store";
 import { useHydrated } from "@/lib/hooks";
 import { useT } from "@/lib/i18n";
 import { onlineEnabled } from "@/lib/supabase";
+import { BackupError, buildBackup, parseBackup } from "@/lib/store/backup";
 import { useHistory, visibleMatches } from "@/lib/store/history";
 import { InputMode, Lang, Theme, useSettings } from "@/lib/store/settings";
 
@@ -70,6 +72,33 @@ function SettingsForm() {
   const userId = useAuth((a) => a.user?.id ?? null);
   const localCount = useHistory((h) => visibleMatches(h.matches, userId).length);
   const clear = useHistory((h) => h.clear);
+  const allMatches = useHistory((h) => h.matches);
+  const importMatches = useHistory((h) => h.importMatches);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [importMsg, setImportMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const visible = useMemo(() => visibleMatches(allMatches, userId), [allMatches, userId]);
+
+  const exportBackup = () => {
+    const blob = new Blob([JSON.stringify(buildBackup(visible))], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `checkout-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  const onImport = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const { matches, invalid } = parseBackup(await file.text());
+      const { added, skipped } = importMatches(matches);
+      setImportMsg({ ok: true, text: t.importDone(added, skipped) + (invalid ? ` ${t.importPartial(invalid)}` : "") });
+    } catch (e) {
+      if (!(e instanceof BackupError)) console.error(e);
+      setImportMsg({ ok: false, text: t.importInvalid });
+    }
+    if (fileInput.current) fileInput.current.value = "";
+  };
 
   return (
     <div className="space-y-7 pb-4">
@@ -151,6 +180,24 @@ function SettingsForm() {
           >
             <Trash2 className="size-4" /> {t.clearLocalHistory}
           </button>
+        </div>
+        <div className="tile space-y-2 px-4 py-3">
+          <p className="font-medium">{t.backupTitle}</p>
+          <p className="text-xs text-base-content/60">{t.backupHint}</p>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className="btn btn-soft btn-sm" disabled={visible.length === 0} onClick={exportBackup}>
+              <Download className="size-4" /> {t.exportBackup}
+            </button>
+            <button type="button" className="btn btn-soft btn-sm" onClick={() => fileInput.current?.click()}>
+              <Upload className="size-4" /> {t.importBackup}
+            </button>
+            <input ref={fileInput} type="file" accept="application/json,.json" className="hidden" onChange={(e) => void onImport(e.target.files?.[0])} />
+          </div>
+          {importMsg && (
+            <p role="status" className={`text-sm ${importMsg.ok ? "text-success" : "text-error"}`}>
+              {importMsg.text}
+            </p>
+          )}
         </div>
         <div className="panel space-y-1 p-4 text-sm text-base-content/70">
           <p className="font-medium text-base-content">{t.installTitle}</p>

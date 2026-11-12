@@ -6,11 +6,17 @@ import { useState } from "react";
 import { FirstPlayerDraw } from "@/components/game/FirstPlayerDraw";
 import { ConfigFields } from "@/components/ui/ConfigFields";
 import { PageShell } from "@/components/ui/PageShell";
+import { pickFirstIndex, rotateToFirst } from "@/lib/darts/draw";
 import type { GameConfig } from "@/lib/darts/game";
+import { normName } from "@/lib/darts/session";
 import { useHydrated } from "@/lib/hooks";
 import { getT, useT } from "@/lib/i18n";
+import { useHistory } from "@/lib/store/history";
 import { useLocalGame } from "@/lib/store/local-game";
 import { useSettings } from "@/lib/store/settings";
+
+/** A previous match counts as the same sitting if it was played within this window. */
+const SESSION_WINDOW_MS = 6 * 3_600_000;
 
 export default function NewGamePage() {
   const hydrated = useHydrated();
@@ -23,6 +29,7 @@ function SetupForm() {
   const t = useT();
   const settings = useSettings();
   const start = useLocalGame((s) => s.start);
+  const lastMatch = useLocalGame((s) => s.match);
   const [config, setConfig] = useState<GameConfig>(settings.lastConfig);
   const [names, setNames] = useState<string[]>(() =>
     settings.lastPlayers.length ? settings.lastPlayers : [settings.name || getT().playerN(1)],
@@ -38,8 +45,17 @@ function SetupForm() {
   /** Players in throwing order plus who the draw picked; set while the draw animation plays. */
   const [draw, setDraw] = useState<{ order: string[]; winnerIndex: number } | null>(null);
 
+  // Same players as the previous match, shortly after: offer to keep playing in the same session.
+  const [openedAt] = useState(() => Date.now());
+  const sameSession =
+    !!lastMatch?.sessionId &&
+    openedAt - (lastMatch.lastActiveAt ?? lastMatch.startedAt) < SESSION_WINDOW_MS &&
+    [...lastMatch.players.map((p) => normName(p.name))].sort().join("|") === names.map(normName).sort().join("|");
+  const sessionMatches = useHistory((s) => s.matches.filter((m) => m.sessionId === lastMatch?.sessionId).length);
+  const [keepSession, setKeepSession] = useState(true);
+
   const begin = (order: string[]) => {
-    start(config, order);
+    start(config, order, sameSession && keepSession ? lastMatch?.sessionId : undefined);
     router.push("/play/game");
   };
 
@@ -47,7 +63,7 @@ function SetupForm() {
     const cleaned = names.map((n, i) => n.trim() || t.playerN(i + 1));
     settings.set({ lastConfig: config, lastPlayers: cleaned });
     if (cleaned.length < 2) return begin(cleaned);
-    setDraw({ order: cleaned, winnerIndex: Math.floor(Math.random() * cleaned.length) });
+    setDraw({ order: cleaned, winnerIndex: pickFirstIndex(cleaned.length) });
   };
 
   // The drawn player throws first: rotate the order so they lead, keeping everyone else in sequence.
@@ -55,7 +71,7 @@ function SetupForm() {
     if (!draw) return;
     const { order, winnerIndex } = draw;
     setDraw(null);
-    begin([...order.slice(winnerIndex), ...order.slice(0, winnerIndex)]);
+    begin(rotateToFirst(order, winnerIndex));
   };
 
   return (
@@ -101,6 +117,13 @@ function SetupForm() {
           </button>
         )}
       </section>
+
+      {sameSession && (
+        <label className="tile flex cursor-pointer items-center gap-3 px-4 py-3">
+          <input type="checkbox" className="toggle toggle-primary" checked={keepSession} onChange={(e) => setKeepSession(e.target.checked)} />
+          <span className="text-sm">{t.keepSession(sessionMatches)}</span>
+        </label>
+      )}
 
       {draw && <FirstPlayerDraw names={draw.order} winnerIndex={draw.winnerIndex} onDone={finishDraw} />}
 

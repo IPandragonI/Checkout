@@ -18,9 +18,13 @@ A mobile-first PWA that replaces the calculator during 501 / 301 darts games. Sc
 - **Legs / matches** (first to 1, 2, 3 or 5). The starting thrower alternates between legs, and rematches rotate the order.
 - **Pass-and-play** for 1–8 players on one phone, fully offline.
 - **Random first thrower**: starting a game with 2+ players runs a roulette-style draw that lands on who throws first.
-- **Stats per match**: each finished match keeps its own breakdown (duration, 3-dart average, first-9, checkout %,
-  highest checkout, best leg, 60+/100+/140+/180 counts). It shows right after the last dart, and the Stats screen
-  lists recent matches. Everything lives in localStorage; no backend is needed.
+- **Sessions**: matches played in one sitting (rematches, or "same session" on the setup screen) form a session.
+  Stats are kept per session, with the details of each match inside: leaderboard, 3-dart and first-9 averages,
+  checkout %, 60+/100+/140+/180 counts, best volleys with the darts that made them, favourite double, and a
+  dartboard heat map of where the darts landed (dart-by-dart entry only). Unfinished matches are kept too, and the
+  playing time ignores long pauses. Everything lives in localStorage; no backend is needed.
+- **Backup**: Settings can export all matches to a JSON file and import it back (e.g. on a new phone). Import merges
+  by match id and ignores malformed entries.
 - **Optional accounts**: guests play immediately and their history stays in localStorage. Signing in
   (email/password, plus Google/GitHub if enabled) uploads the guest matches to the account and keeps history
   synced across devices. Signing out returns the device to guest mode; changes not yet uploaded are kept for next time.
@@ -37,13 +41,14 @@ Game state is never stored. It's **replayed** from `(config, players, ordered vi
 `src/lib/darts/game.ts`. Games keep their visits in a persisted Zustand store.
 
 ```
-src/lib/darts/      pure engine: darts, checkout solver, bust rules, replay, stats (+ vitest tests)
+src/lib/darts/      pure engine: darts, checkout solver, bust rules, replay, stats, sessions (+ vitest tests)
 src/lib/store/      zustand + localStorage: settings, local game, match history
 src/lib/supabase.ts Optional Supabase client (accounts only)
 src/lib/auth/       session store + auth actions (client-side Supabase Auth, PKCE)
 src/lib/sync/       two-way sync of match history for signed-in users
-src/components/game GameScreen, DartPad, TotalPad, Scoreboard, VisitStrip, MatchSummary
-supabase/schema.sql tables, RLS policies, realtime publication, triggers
+src/components/game GameScreen, DartPad, TotalPad, Scoreboard, VisitStrip, MatchSummary, MatchStats
+src/components/stats DartBoard heat map
+supabase/schema.sql matches table, RLS policies, trigger (plus cleanup of the old rooms tables)
 assets/brand/       source logo (not shipped; icons are generated from it)
 ```
 
@@ -73,8 +78,10 @@ Solo and pass-and-play work without any configuration.
 5. On Vercel, add the same variables under Project → Settings → Environment Variables, then redeploy. `NEXT_PUBLIC_*`
    values are baked in at build time.
 
-> Personal match history is private: row-level security restricts each `matches` row to its owner. The `rooms`,
-> `players` and `visits` tables in the schema are leftovers from the removed online mode and can be dropped.
+> Personal match history is private: row-level security restricts each `matches` row to its owner. Re-running
+> `supabase/schema.sql` also migrates an existing database: it drops the old online-rooms tables and the unused
+> `mode`/`room_code` columns, and adds `started_at`, `active_ms` and `session_id` to `matches`. Run it before
+> deploying this version, or sync uploads will fail on the missing columns.
 
 ### Icons and branding
 
